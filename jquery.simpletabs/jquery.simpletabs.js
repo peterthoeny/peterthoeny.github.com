@@ -1,7 +1,7 @@
 /**
  * Simple tabs plugin for jQuery, showing bigger tags in the center
- * @version    0.9.0
- * @release    2021-04-12
+ * @version    1.2.0
+ * @release    2021-04-23
  * @repository https://github.com/peterthoeny/jquery.simpletabs
  * @author     Peter Thoeny, https://twiki.org/ & https://github.com/peterthoeny
  * @copyright  2021 Peter Thoeny, https://github.com/peterthoeny
@@ -38,10 +38,16 @@
             if(Number.isNaN(spacers) && idx > 0) {
                 spacers = 1;
             }
-            for(var n = 0; n < spacers; n++) {
-                html += '<td class="jqSimpleTabsSpacer"></td>';
+            var classes = [ 'jqSimpleTabsSpacer' ];
+            if(item.spacerClass) {
+                item.spacerClass.split(/\s+/).forEach(function(c) {
+                    classes.push(c);
+                });
             }
-            var classes = [];
+            for(var n = 0; n < spacers; n++) {
+                html += '<td class="' + classes.join(' ') + '"></td>';
+            }
+            classes = [ 'jqSimpleTabsTab' ];
             var label = item.label;
             if(item.id === options.activeTab) {
                 classes.push('jqSimpleTabsActive');
@@ -49,12 +55,18 @@
                 classes.push('jqSimpleTabsInactive');
                 label = '<a href="' + item.url + '">' + label + '</a>';
             }
-            if(item.classes) {
-                item.classes.split(/ +/).forEach(function(c) {
+            if(item.tabClass) {
+                item.tabClass.split(/\s+/).forEach(function(c) {
                     classes.push(c);
                 });
             }
-            html += '<td class="' + classes.join(' ') + '" id="' + item.id + '">' + label + '</td>';
+            var attrs = [];
+            attrs.push('class="' + classes.join(' ') + '"');
+            attrs.push('id="' + item.id + '"');
+            if(item.tooltip) {
+               attrs.push('title="' + item.tooltip + '"');
+            }
+            html += '<td ' + attrs.join(' ') + '>' + label + '</td>';
             tabs.push(html);
         });
         var html = '<table class="jqSimpleTabsTable"><tr><td class="jqSimpleTabsBefore"></td>'
