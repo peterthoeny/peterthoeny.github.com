@@ -1,7 +1,7 @@
 /**
- * Simple gauge plugin for jQuery
- * @version    1.0.0
- * @release    2021-06-03
+ * Simple analog and digital gauge plugin for jQuery to build dashboards
+ * @version    1.0.2
+ * @release    2021-06-04
  * @repository https://github.com/peterthoeny/jquery.simplegauge
  * @author     Peter Thoeny, https://twiki.org/ & https://github.com/peterthoeny
  * @copyright  2021 Peter Thoeny, https://github.com/peterthoeny
@@ -11,7 +11,7 @@
 
     'use strict';
 
-    let debug = true;
+    let debug = false;
 
     function debugLog(msg) {
         if(debug) {
@@ -87,7 +87,8 @@
                 marginLeft: (eWidth - cWidth) / 2,
                 marginTop:  (eHeight - cHeight) / 2,
                 width:      cWidth,
-                height:     cHeight
+                height:     cHeight,
+                overflow:   'hidden'
             });
             if(this.options.container) {
                 if(this.options.container.style) {
@@ -150,9 +151,9 @@
         },
 */
         getBarColor: function (value) {
-            var color = '#666';
+            let color = '#666';
             this.options.bars.colors.forEach(function(set) {
-                if(set[0] <= value) {
+                if(Number(set[0]) <= value) {
                    color = set[1];
                 }
             });
@@ -168,12 +169,13 @@
             });
             let maxIdx = this.options.bars.colors.length - 1;
             this.options.bars.colors.forEach((colorArr, idx) => {
-                let startAngle = self.getAngleFromValue(colorArr[0]);
-                let endVal = idx + 1 > maxIdx ? this.options.max : this.options.bars.colors[idx + 1][0];
-                let endAngle = self.getAngleFromValue(endVal);
+                let value = Number(colorArr[0]);
                 let color  = colorArr[1];
                 let scale1 = Number(colorArr[2] || this.options.bars.scale1);
                 let scale2 = Number(colorArr[3] || this.options.bars.scale2);
+                let startAngle = self.getAngleFromValue(value);
+                let endVal = idx + 1 > maxIdx ? this.options.max : this.options.bars.colors[idx + 1][0];
+                let endAngle = self.getAngleFromValue(endVal);
                 let width1  = this.options.gaugeWidth * scale1 / 100;
                 let width2 = this.options.gaugeWidth * scale2 / 100;
                 let width = (width2 + width1) / 2;
@@ -296,7 +298,7 @@
         },
 
         appendSVG: function ($elem, type, attributes) {
-            var path = document.createElementNS('http://www.w3.org/2000/svg', type);
+            let path = document.createElementNS('http://www.w3.org/2000/svg', type);
             $.each(attributes, function (name, value) {
                 path.setAttribute(name, value);
             });
@@ -304,14 +306,14 @@
         },
 
         getValue: function () {
-            var value = this.options.value;
+            let value = this.options.value;
             debugLog('getValue(): ' + value);
             return value;
         },
 
         setValue: function (value) {
             debugLog('setValue(' + value + ')');
-            this.options.value = value;
+            this.options.value = Number(value);
             if(this.options.type.match(/\bdigital\b/)) {
                 this.setDigital();
             }
@@ -327,7 +329,7 @@
                 if(typeof html != 'string') {
                     html = $.fn.simpleGauge.defaults.digital.text;
                 }
-                var value = this.options.value;
+                let value = this.options.value;
                 html = html.replace(/\{value(?:\.(\d+))?\}/g, function(m, c1) {
                     if(c1) {
                         let factor = 10 ** parseInt(c1);
@@ -372,7 +374,7 @@
                         } else {
                             output[key] = this._mergeDeep(target[key], source[key]);
                         }
-                    } else {
+                    } else if(source[key] != undefined) {
                         Object.assign(output, { [key]: source[key] });
                     }
                 });
@@ -381,10 +383,10 @@
         },
 
         _styleToCss: function (style, defaults) {
-            var css = JSON.parse(JSON.stringify(defaults));
+            let css = JSON.parse(JSON.stringify(defaults));
             if(typeof style === 'string') {
                 style.split(/\s*;\s*/).filter(Boolean).forEach(function(txt) {
-                    var keyVal = txt.split(/\s*:\s*/);
+                    let keyVal = txt.split(/\s*:\s*/);
                     if(keyVal.length === 2) {
                         css[keyVal[0]] = keyVal[1];
                     }
@@ -400,14 +402,14 @@
     };
 
     $.fn.simpleGauge = function(options, val) {
-        var isInit = typeof options === 'object';
+        let isInit = typeof options === 'object';
         if(isInit && options.debug != undefined) {
            debug = options.debug;
         }
-        var result = null;
+        let result = null;
         this.each(function () {
-            var $this = $(this);
-            var data = $this.data('plugin-simplegauge');
+            let $this = $(this);
+            let data = $this.data('plugin-simplegauge');
             if(isInit && !data) {
                 $this.data('plugin-simplegauge', (data = new SimpleGauge($(this), options)));
             } else if(typeof options === 'string') {
@@ -488,28 +490,28 @@
         pointer: {
             scale: 85,
             shape: [
-                '-3,-10',
-                '3,-10',
-                '3,-6.3',
-                '5,-5',
-                '6.3,-3',
-                '7,0',
-                '6.3,3',
-                '5,5',
-                '3,6.3',
-                '3,50',
+                '-2,-10',
+                '2,-10',
+                '2.1,-5.3',
+                '4,-4',
+                '5.3,-2.1',
+                '5.7,0',
+                '5.3,2.1',
+                '4,4',
+                '2.1,5.3',
+                '2,50',
                 '1.5,96',
                 '0,100',
-                '-1.5,96',
-                '-3,50',
-                '-3,6.3',
-                '-5,5',
-                '-6.3,3',
-                '-7,0',
-                '-6.3,-3',
-                '-5,-5',
-                '-3,-6.3',
-                '-3,-10'
+                '-1,96',
+                '-2,50',
+                '-2.1,5.3',
+                '-4,4',
+                '-5.3,2.1',
+                '-5.7,0',
+                '-5.3,-2.1',
+                '-4,-4',
+                '-2.1,-5.3',
+                '-2,-10'
             ].join(' '),
             style: {
                 color:       '#778',
