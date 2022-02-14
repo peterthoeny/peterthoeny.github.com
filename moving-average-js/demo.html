@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Demo of Moving Average: Show Classic and Balanced SMA, EMA, WMA</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="./moving-average.js"></script>
+  <script src="./demo.js"></script>
+  <style>
+    body {
+        padding: 3px 10px;
+        background-color: #ffffff;
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+        color: #000000;
+    }
+    h1 { font-size: 1.8em; color: #222222; margin: 3px 0 10px 0; }
+    h2 { font-size: 1.2em; color: #000000; margin: 3px 0 10px 0; }
+    hr { border: 0; border-bottom: 1px solid #aaa; }
+    .help {
+        font-size: 80%;
+        color:gray;
+    }
+    .solidLine {
+        text-decoration-line: underline;
+        text-decoration-style: solid;
+        text-decoration-thickness: 2.5px;
+    }
+    .dashedLine {
+        text-decoration-line: underline;
+        text-decoration-style: dashed;
+        text-decoration-thickness: 2.5px;
+    }
+  </style>
+  <script>
+    $('document').ready(function() {
+        redraw();
+
+        $('#dataPoints').blur(function() {
+        console.log('blur');
+            redraw();
+        });
+
+        let firstRandom = true;
+        $('#randomize').click(function() {
+            let arr;
+            if(firstRandom) {
+                // first time: handcraftet values, not random
+                arr = [ 2, 3, 3, 4, 4, 5, 7, 8, 9, 8, 6, 3, 2, 2, 1, 0, 0, 2, 2, 4, 5, 5, 6, 7, 9, 10, 8, 7, 6, 6, 4, 3, 2, 1, 1, 2 ];
+                firstRandom = false;
+            } else {
+                let val = Math.floor(Math.random() * 11);
+                arr = $('#dataPoints').val().split(/ *, */).map(unused => {
+                    let delta = Math.floor(Math.random() * 6) - 3;
+                    val = val + delta;
+                    delta = Math.max(1, Math.abs(delta));
+                    if(val < 0) {
+                        val = delta;
+                    } else if(val > 10) {
+                        val = 10 - delta;
+                    }
+                    return val;
+                });
+            }
+            $('#dataPoints').val(arr.join(', '));
+            redraw();
+        });
+
+        $('#maSize').blur(function() {
+            redraw();
+        });
+
+        $('#showSMA, #showEMA, #showWMA, #showSlope').change(function() {
+            redraw();
+        });
+    });
+
+    function redraw() {
+        let arr = $('#dataPoints').val().split(/ *, */).map(val => {
+            return val.replace(/[^\d\.]/g, '');
+        }).filter(Boolean).slice(0, 51).map(val => { return Number(val); });
+        if(arr.length < 3) {
+            arr = arr.concat([ 1, 2, 3, 4 ]).slice(0, 4);
+        }
+        //console.log('arr: '+JSON.stringify(arr));
+        $('#dataPoints').val(arr.join(', '));
+        let maSize = Math.max(2, Math.min(arr.length, parseInt($('#maSize').val(), 10)));
+        $('#maSize').val(maSize);
+        let showSMA = $('#showSMA').prop('checked');
+        let showEMA = $('#showEMA').prop('checked');
+        let showWMA = $('#showWMA').prop('checked');
+        let showSlope = $('#showSlope').prop('checked');
+        drawGraph(arr, maSize, showSMA, showEMA, showWMA, showSlope);
+    }
+  </script>
+</head>
+<body>
+<h1>Demo of Moving Average: Show Classic and Balanced SMA, EMA, WMA</h1>
+<table>
+<tr><td>
+  Data points:
+  <span class="help">(y: 0...10)</span>
+</td><td>
+  <input type="text"
+    value="1, 0, 0, 1, 1, 2, 2, 2, 3, 5, 7, 8, 8, 9, 9, 9, 10, 10, 10, 10, 9, 9, 9, 8, 8, 7, 5, 3, 2, 2, 2, 1, 1, 0, 0, 1"
+    id="dataPoints"
+    size="120" />
+  <input type="button" value="Submit" />
+  <input type="button" value="Randomize" id="randomize" />
+</td></tr>
+<tr><td>
+  Moving average size:
+</td><td>
+  <input type="text" value="11" size="2" id="maSize" />
+</td></tr>
+<tr><td>
+  Show in chart:
+</td><td>
+  <label><input type="checkbox" id="showSMA" checked="checked" /> SMA
+  (<span style="color: #33ee33;" class="dashedLine">classic</span> &amp; <span style="color: #33ee33;" class="solidLine">balanced</span>)
+  </label> &nbsp;
+  <label><input type="checkbox" id="showEMA" checked="checked" /> EMA
+  (<span style="color: #ee9933;" class="dashedLine">classic</span> &amp; <span style="color: #ee9933;" class="solidLine">balanced</span>)
+  </label> &nbsp;
+  <label><input type="checkbox" id="showWMA" checked="checked" /> WMA
+  (<span style="color: #3333ee;" class="dashedLine">classic</span> &amp; <span style="color: #3333ee;" class="solidLine">balanced</span>)
+  </label> &nbsp;
+  <label><input type="checkbox" id="showSlope" checked="checked" /> Slope
+  (<span style="color: #ee3333;" class="dashedLine">overall</span> &amp; <span style="color: #ee33ee;" class="dashedLine">extended</span>)
+  </label>
+</td></tr>
+</table>
+<canvas id="graphCanvas" style="margin: 10px;" width="1200" height="590"></canvas>
+<hr />
+<table>
+<tr><td>Repository:</td><td><a href="https://github.com/peterthoeny/moving-average-js" target="_blank">
+  https://github.com/peterthoeny/moving-average-js</a></td><td>&nbsp;&nbsp;&nbsp;</td>
+<td>Author:</td><td><a href="https://github.com/peterthoeny" target="_blank">
+  https://github.com/peterthoeny</a></td></tr>
+<tr><td>Demo URL:</td><td><a href="https://peterthoeny.github.io/moving-average/demo.html" target="_blank">
+  https://peterthoeny.github.io/moving-average/demo.html</a></td><td></td>
+<td>Copyright:</td><td>2022, Peter Thoeny</td></tr>
+</table>
+<hr />
+</body>
+</html>
