@@ -1,5 +1,5 @@
 // moving-average.js: Moving average algorithms: Classic and balanced SMA, EMA, WMA
-// Copyright: Peter Thoeny, https://github.com/peterthoeny/moving-average-js
+// Copyright: 2022, Peter Thoeny, https://github.com/peterthoeny/moving-average-js
 // License: MIT
 
 /**
@@ -18,10 +18,13 @@
  * @return {Array}  maArr  moving average array
  */
 function movingAverage(arr, type, size) {
-    let resArr = [];
-    if(!arr || arr.length < size) {
-        return resArr;
+    if(!arr || arr.length < 4) {
+        return arr || [];
     }
+    if(size > arr.length) {
+        size = arr.length;
+    }
+    let resArr = [];
     let srcArr = arr.map(val => { return Number(val); });
     let srcIdx = 0;
     let srcLength = srcArr.length;
@@ -176,12 +179,18 @@ function movingAverage(arr, type, size) {
                 lSlopeArr.push(lStartVal + i * lSlope);
                 rSlopeArr.unshift(rStartVal - (i + 1) * rSlope);
             }
-            let nullArr = [];
-            for(let i = 0; i < srcLength - (2 * halfSize) - 2; i++) {
-                nullArr.push(null);
+            if(srcLength === 2 * halfSize + 1) {
+                resArr = lSlopeArr.concat(rSlopeArr.slice(1));
+            } else if(srcLength < 2 * halfSize + 1) {
+                resArr = lSlopeArr.slice(0, -1).concat(rSlopeArr.slice(1));
+            } else {
+                let nullArr = [];
+                for(let i = 0; i < srcLength - (2 * halfSize) - 2; i++) {
+                    nullArr.push(null);
+                }
+                resArr = lSlopeArr.concat(nullArr, rSlopeArr);
             }
-            srcArr = lSlopeArr.concat(nullArr, rSlopeArr);
-            return srcArr;
+            return resArr;
         }
         resArr = resArr.slice(halfSize).slice(0, srcLength);
     }

@@ -1,5 +1,5 @@
 // demo.js: Demo for moving average: Show chart of classic and balanced SMA, EMA, WMA
-// Copyright: Peter Thoeny, https://github.com/peterthoeny/moving-average-js
+// Copyright: 2022, Peter Thoeny, https://github.com/peterthoeny/moving-average-js
 // License: MIT
 
 let cp = {  // chart properties
@@ -41,18 +41,20 @@ function drawGraph(arr, size, showSMA, showEMA, showWMA, showSlope) {
         maArr = movingAverage(arr, 'BSlope', size);
         drawLine(maArr, '#ff3333', '', false, 1.5, [2, 8], -halfSize);
         let fillColor = 'rgba(255, 225, 225, 0.25)';
+        let x = Math.min(arr.length - 1, 2 * halfSize);
         let points = [
             [0, maArr[0]],
-            [2 * halfSize, maArr[2 * halfSize]],
-            [2 * halfSize, 0],
+            [x, maArr[x]],
+            [x, 0],
             [0, 0]
         ];
         drawPolygon(points, fillColor, -halfSize);
+        x = maArr.length - Math.min(arr.length - 2, 2 * halfSize) - 1;
         points = [
-            [maArr.length - 2 * halfSize - 1, maArr[maArr.length - 2 * halfSize - 1]],
+            [x, maArr[x]],
             [maArr.length - 1, maArr[maArr.length - 1]],
             [maArr.length - 1, 0],
-            [maArr.length - 2 * halfSize - 1, 0]
+            [x, 0]
         ];
         drawPolygon(points, fillColor, -halfSize);
     }
