@@ -41,7 +41,7 @@ function drawGraph(arr, size, showSMA, showEMA, showWMA, showSlope) {
         let halfSize = Math.floor(size / 2);
         maArr = movingAverage(arr, 'BSlope', size);
         drawLine(maArr, '#ff3333', '', false, 1.5, [2, 8], -halfSize);
-        let fillColor = 'rgba(255, 225, 225, 0.25)';
+        let fillColor = 'rgba(255, 225, 225, 0.4)';
         let x = Math.min(arr.length - 1, 2 * halfSize);
         let points = [
             [0, maArr[0]],
