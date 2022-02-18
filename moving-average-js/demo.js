@@ -1,5 +1,6 @@
-// demo.js: Demo for moving average: Show chart of classic and balanced SMA, EMA, WMA
+// demo.js: Demo of moving average: Show chart of classic and balanced SMA, EMA, WMA
 // Copyright: 2022, Peter Thoeny, https://github.com/peterthoeny/moving-average-js
+// Version: v1.0.1
 // License: MIT
 
 let cp = {  // chart properties

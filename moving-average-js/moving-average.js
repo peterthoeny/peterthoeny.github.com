@@ -1,5 +1,6 @@
 // moving-average.js: Moving average algorithms: Classic and balanced SMA, EMA, WMA
 // Copyright: 2022, Peter Thoeny, https://github.com/peterthoeny/moving-average-js
+// Version: v1.0.1
 // License: MIT
 
 /**
