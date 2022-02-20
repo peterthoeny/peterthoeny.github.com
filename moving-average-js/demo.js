@@ -1,6 +1,6 @@
-// demo.js: Demo of moving average: Show chart of classic and balanced SMA, EMA, WMA
+// demo.js: Demo of moving average: Show chart of classic and balanced SMA, EMA, WMA, SMM, Slope
 // Copyright: 2022, Peter Thoeny, https://github.com/peterthoeny/moving-average-js
-// Version: v1.0.1
+// Version: v1.1.0
 // License: MIT
 
 let cp = {  // chart properties
@@ -30,18 +30,18 @@ let cp = {  // chart properties
     yStep:      10,
 };
 
-function drawGraph(arr, size, showSMA, showEMA, showWMA, showSlope) {
+function drawGraph(arr, size, show) {
     drawGrid(arr.length);
     drawLine(arr, '#ee3333', 'Input');
     let maArr;
-    if(showSlope) {
+    if(show.Slope) {
         maArr = movingAverage(arr, 'Slope', size);
-        drawLine(maArr, '#ee33ee', 'Slope', true, 2, [4, 4]);
+        drawLine(maArr, '#ff3333', 'Slope', true, 2, [4, 4]);
         // draw slopes on left and right, used by balanced moving average
         let halfSize = Math.floor(size / 2);
         maArr = movingAverage(arr, 'BSlope', size);
-        drawLine(maArr, '#ff3333', '', false, 1.5, [2, 8], -halfSize);
-        let fillColor = 'rgba(255, 225, 225, 0.4)';
+        drawLine(maArr, '#ee33ee', '', false, 1.5, [2, 8], -halfSize);
+        let fillColor = 'rgba(255, 185, 225, 0.25)';
         let x = Math.min(arr.length - 1, 2 * halfSize);
         let points = [
             [0, maArr[0]],
@@ -59,23 +59,29 @@ function drawGraph(arr, size, showSMA, showEMA, showWMA, showSlope) {
         ];
         drawPolygon(points, fillColor, -halfSize);
     }
-    if(showSMA) {
+    if(show.SMA) {
         maArr = movingAverage(arr, 'SMA', size);
-        drawLine(maArr, '#33ee33', 'SMA', true, 2, [4, 4]);
+        drawLine(maArr, '#3333ee', 'SMA', true, 2, [4, 4]);
         maArr = movingAverage(arr, 'BSMA', size);
-        drawLine(maArr, '#33ee33', 'BSMA', true, 1.5);
+        drawLine(maArr, '#3333ee', 'BSMA', true, 1.5);
     }
-    if(showEMA) {
+    if(show.EMA) {
         maArr = movingAverage(arr, 'EMA', size);
         drawLine(maArr, '#ee9933', 'EMA', true, 2, [4, 4]);
         maArr = movingAverage(arr, 'BEMA', size);
         drawLine(maArr, '#ee9933', 'BEMA', true, 1.5);
     }
-    if(showWMA) {
+    if(show.WMA) {
         maArr = movingAverage(arr, 'WMA', size);
-        drawLine(maArr, '#3333ee', 'WMA', true, 2, [4, 4]);
+        drawLine(maArr, '#33ee33', 'WMA', true, 2, [4, 4]);
         maArr = movingAverage(arr, 'BWMA', size);
-        drawLine(maArr, '#3333ee', 'BWMA', true, 1.5);
+        drawLine(maArr, '#33ee33', 'BWMA', true, 1.5);
+    }
+    if(show.SMM) {
+        maArr = movingAverage(arr, 'SMM', size);
+        drawLine(maArr, '#33eeee', 'SMM', true, 2, [4, 4]);
+        maArr = movingAverage(arr, 'BSMM', size);
+        drawLine(maArr, '#33eeee', 'BSMM', true, 1.5);
     }
 }
 

@@ -1,6 +1,6 @@
-// moving-average.js: Moving average algorithms: Classic and balanced SMA, EMA, WMA
+// moving-average.js: Moving average algorithms: Classic and balanced SMA, EMA, WMA, SMM, Slope
 // Copyright: 2022, Peter Thoeny, https://github.com/peterthoeny/moving-average-js
-// Version: v1.0.1
+// Version: v1.1.0
 // License: MIT
 
 /**
@@ -13,7 +13,9 @@
  *                         'BEMA':  balanced exponential moving average,
  *                         'WMA':   weighted moving average,
  *                         'BWMA':  balanced weighted moving average,
- *                         'Slope': linerar slope
+ *                         'SMM':   simple moving mean,
+ *                         'BSMM':  balanced simple moving mean,
+ *                         'Slope': linear slope over all data points
  *                         'BSlope': special case returning extended array with slope used in balanced algorythm
  * @param  {String} size   size of moving array slice to calculate average
  * @return {Array}  maArr  moving average array
@@ -32,6 +34,7 @@ function movingAverage(arr, type, size) {
     let isSMA = (/SMA/i.test(type));
     let isWMA = (/WMA/i.test(type));
     let isEMA = (/EMA/i.test(type));
+    let isSMM = (/SMM/i.test(type));
     let isSlope = (/Slope/i.test(type));
     let isBalanced = (/^B/i.test(type));
     let halfSize = 0;
@@ -67,6 +70,14 @@ function movingAverage(arr, type, size) {
                 val = (val - prevVal) * weight + prevVal;
                 resArr.push(val);
                 prevVal = val;
+            });
+        } else if(isSMM) {
+            srcArr.forEach(function(val, idx) {
+                let start = Math.max(0, idx - size + 1);
+                let end = Math.min(srcArr.length, idx + 1);
+                let half = Math.floor((end - start) / 2);
+                val = srcArr.slice(start, end).sort()[half];
+                resArr.push(val);
             });
         } else if(isSlope) {
             let stats = srcArr.reduce(function(acc, v, idx, arry) {
@@ -174,6 +185,14 @@ function movingAverage(arr, type, size) {
                 resArr[idx] = (resArr[idx] + val) / 2;
                 prevVal = val;
             };
+        } else if(isSMM) {
+            srcArr.forEach(function(val, idx) {
+                let start = Math.max(0, idx - halfSize);
+                let end = Math.min(srcArr.length, idx + halfSize + 1);
+                let half = Math.floor((end - start) / 2);
+                val = srcArr.slice(start, end).sort()[half];
+                resArr.push(val);
+            });
         } else if(isSlope) {
             // return expanded slope on left and right, with gap in middle
             for(let i = 0; i <= halfSize; i++) {
