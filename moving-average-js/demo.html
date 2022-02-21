@@ -3,7 +3,7 @@
 <!--
   demo.html: Demo of moving average: Show chart of classic and balanced SMA, EMA, WMA, SMM, Slope
   Copyright: 2022, Peter Thoeny, https://github.com/peterthoeny/moving-average-js
-  Version: v1.1.0
+  Version: v1.1.1
   License: MIT
 -->
 <head>
@@ -22,6 +22,9 @@
     h1 { font-size: 1.7em; color: #222222; margin: 3px 0 10px 0; }
     h2 { font-size: 1.2em; color: #000000; margin: 3px 0 10px 0; }
     hr { border: 0; border-bottom: 1px solid #aaa; }
+    table td {
+      white-space: nowrap;
+    }
     .help {
         font-size: 75%;
         color: gray;
@@ -93,8 +96,8 @@
         $('#maSize').val(maSize);
         let show = {
             SMA:   $('#showSMA').prop('checked'),
-            EMA:   $('#showEMA').prop('checked'),
             WMA:   $('#showWMA').prop('checked'),
+            EMA:   $('#showEMA').prop('checked'),
             SMM:   $('#showSMM').prop('checked'),
             Slope: $('#showSlope').prop('checked')
         };
@@ -103,7 +106,7 @@
   </script>
 </head>
 <body>
-<h1>Demo of Moving Average: Show Classic and Balanced SMA, EMA, WMA, SMM, Slope <span class="help">(v1.1.0)</span></h1>
+<h1>Demo of Moving Average: Show Classic and Balanced SMA, EMA, WMA, SMM, Slope <span class="help">(v1.1.1)</span></h1>
 <table>
 <tr><td>
   Data points:
@@ -117,23 +120,23 @@
   <input type="button" value="Randomize" id="randomize" />
 </td></tr>
 <tr><td>
-  Moving average size:
+  Moving window size:
 </td><td>
   <input type="text" value="11" size="2" id="maSize" />
 </td></tr>
 <tr><td>
   Show in chart:
 </td><td>
-  <label><input type="checkbox" id="showSMA" checked="checked" /> SMA:
+  <label title="Simple moving average"><input type="checkbox" id="showSMA" checked="checked" /> SMA:
   <span style="color: #3333ee;" class="dashedLine">classic</span>, <span style="color: #3333ee;" class="solidLine">balanced</span>
   </label> &nbsp;
-  <label><input type="checkbox" id="showEMA" checked="checked" /> EMA:
-  <span style="color: #ee9933;" class="dashedLine">classic</span>, <span style="color: #ee9933;" class="solidLine">balanced</span>
-  </label> &nbsp;
-  <label><input type="checkbox" id="showWMA" checked="checked" /> WMA:
+  <label title="Weighted moving average"><input type="checkbox" id="showWMA" checked="checked" /> WMA:
   <span style="color: #3333ee;" class="dashedLine">classic</span>, <span style="color: #33ee33;" class="solidLine">balanced</span>
   </label> &nbsp;
-  <label><input type="checkbox" id="showSMM" checked="checked" /> SMM:
+  <label title="Exponential moving average"><input type="checkbox" id="showEMA" checked="checked" /> EMA:
+  <span style="color: #ee9933;" class="dashedLine">classic</span>, <span style="color: #ee9933;" class="solidLine">balanced</span>
+  </label> &nbsp;
+  <label title="Simple moving mean"><input type="checkbox" id="showSMM" /> SMM:
   <span style="color: #33eeee;" class="dashedLine">classic</span>, <span style="color: #33eeee;" class="solidLine">balanced</span>
   </label> &nbsp;
   <label><input type="checkbox" id="showSlope" checked="checked" /> Slope:
@@ -141,7 +144,7 @@
   </label>
 </td></tr>
 </table>
-<canvas id="graphCanvas" style="margin: 10px;" width="1220" height="590"></canvas>
+<canvas id="graphCanvas" style="margin: 10px;" width="1200" height="590"></canvas>
 <hr />
 <table>
 <tr><td>Repository:</td><td><a href="https://github.com/peterthoeny/moving-average-js" target="_blank">

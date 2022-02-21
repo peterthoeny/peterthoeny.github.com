@@ -1,6 +1,6 @@
 // moving-average.js: Moving average algorithms: Classic and balanced SMA, EMA, WMA, SMM, Slope
 // Copyright: 2022, Peter Thoeny, https://github.com/peterthoeny/moving-average-js
-// Version: v1.1.0
+// Version: v1.1.1
 // License: MIT
 
 /**
@@ -9,14 +9,14 @@
  * @param  {Array}  arr    data points (array of y-values)
  * @param  {String} type   'SMA':   simple moving average,
  *                         'BSMA':  balanced simple moving average,
- *                         'EMA':   exponential moving average,
- *                         'BEMA':  balanced exponential moving average,
  *                         'WMA':   weighted moving average,
  *                         'BWMA':  balanced weighted moving average,
+ *                         'EMA':   exponential moving average,
+ *                         'BEMA':  balanced exponential moving average,
  *                         'SMM':   simple moving mean,
  *                         'BSMM':  balanced simple moving mean,
  *                         'Slope': linear slope over all data points
- *                         'BSlope': special case returning extended array with slope used in balanced algorythm
+ *                         'BSlope': special case returning extended array with slope used in balanced algorithm
  * @param  {String} size   size of moving array slice to calculate average
  * @return {Array}  maArr  moving average array
  */
